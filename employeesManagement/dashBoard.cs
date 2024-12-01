@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SQLite;
 using System.Windows.Forms;
 
 namespace employeesManagement
@@ -18,11 +12,10 @@ namespace employeesManagement
             InitializeComponent();
         }
 
-        OleDbConnection con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
-        //OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=db_users.accdb");
+        SQLiteConnection con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
 
-        OleDbCommand cmd = new OleDbCommand();
-        OleDbDataAdapter da = new OleDbDataAdapter();
+        SQLiteCommand cmd = new SQLiteCommand();
+        SQLiteDataAdapter da = new SQLiteDataAdapter();
         DataTable dt = new DataTable();
 
         private void HandleError(Exception ex, string message)
@@ -90,7 +83,7 @@ namespace employeesManagement
 
                 // Count employees
                 string countEmployeesQuery = "SELECT COUNT(*) FROM tbl_employees";
-                using (cmd = new OleDbCommand(countEmployeesQuery, con))
+                using (cmd = new SQLiteCommand(countEmployeesQuery, con))
                 {
                     int employeeCount = Convert.ToInt32(cmd.ExecuteScalar());
                     EmployeeCountLab.Text = $"Employees: {employeeCount}";
@@ -98,7 +91,7 @@ namespace employeesManagement
 
                 // Count tasks
                 string countProjectsQuery = "SELECT COUNT(*) FROM tbl_tasks";
-                using (cmd = new OleDbCommand(countProjectsQuery, con))
+                using (cmd = new SQLiteCommand(countProjectsQuery, con))
                 {
                     int tasksCount = Convert.ToInt32(cmd.ExecuteScalar());
                     TasksCountLab.Text = $"Tasks: {tasksCount}";
@@ -106,7 +99,7 @@ namespace employeesManagement
 
                 // Count departments
                 string countDepartmentsQuery = "SELECT COUNT(*) FROM tbl_departments";
-                using (cmd = new OleDbCommand(countDepartmentsQuery, con))
+                using (cmd = new SQLiteCommand(countDepartmentsQuery, con))
                 {
                     int departmentCount = Convert.ToInt32(cmd.ExecuteScalar());
                     DepCountLab.Text = $"Departments: {departmentCount}";

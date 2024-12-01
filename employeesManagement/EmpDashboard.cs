@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.OleDb;
 using System.IO;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Xml.Linq;
+using System.Data.SQLite;
 
 namespace employeesManagement
 {
@@ -23,11 +15,10 @@ namespace employeesManagement
             InitializeComponent();
         }
 
-        OleDbConnection con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
-        //OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=db_users.accdb");
+        SQLiteConnection con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
 
-        OleDbCommand cmd = new OleDbCommand();
-        OleDbDataAdapter da = new OleDbDataAdapter();
+        SQLiteCommand cmd = new SQLiteCommand();
+        SQLiteDataAdapter da = new SQLiteDataAdapter();
         DataTable dt = new DataTable();
 
         private void HandleError(Exception ex, string message)
@@ -75,9 +66,9 @@ namespace employeesManagement
         {
             try
             {
-                con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
+                con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
                 dt = new DataTable();
-                da = new OleDbDataAdapter("SELECT *FROM tbl_employees", con);
+                da = new SQLiteDataAdapter("SELECT *FROM tbl_employees", con);
 
                 con.Open();
                 LoadDepartmentsComboBox();
@@ -101,9 +92,9 @@ namespace employeesManagement
         {
             try
             {
-                con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
+                con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
                 dt = new DataTable();
-                da = new OleDbDataAdapter("SELECT Gender, COUNT(*) AS GenderCount FROM tbl_employees GROUP BY Gender", con);
+                da = new SQLiteDataAdapter("SELECT Gender, COUNT(*) AS GenderCount FROM tbl_employees GROUP BY Gender", con);
 
                 con.Open();
   
@@ -164,7 +155,7 @@ namespace employeesManagement
 
                 string query = "INSERT INTO tbl_employees (Name, Gender, DepName, Title, StartDate, Salary) " +
                                "VALUES (@Name, @Gender, @DepName, @Title, @StartDate, @Salary)";
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
                 // Add parameters...
                 cmd.Parameters.AddWithValue("@Name", txtname.Text);
                 cmd.Parameters.AddWithValue("@Gender", radioButton1.Checked ? "Male" : "Female");
@@ -175,7 +166,7 @@ namespace employeesManagement
                 cmd.ExecuteNonQuery();
 
                 query = "SELECT @@IDENTITY";
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
                 tempID = Convert.ToInt32(cmd.ExecuteScalar());
                 cmd.ExecuteNonQuery();
 
@@ -209,7 +200,7 @@ namespace employeesManagement
                 string personalQuery = "INSERT INTO tbl_personalInfo (ID, Name, Mall, Telephone, Address, Picture) " +
                 "VALUES (@id, @Name, @Mall, @Telephone, @Address, IIF(@Picture IS NULL, @DefaultPicture, @Picture))";
 
-                cmd = new OleDbCommand(personalQuery, con);
+                cmd = new SQLiteCommand(personalQuery, con);
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.AddWithValue("@Name", name);
                 cmd.Parameters.AddWithValue("@Mall", "no mall yet");
@@ -256,7 +247,7 @@ namespace employeesManagement
                     "WHERE ID=@ID";
 
                 Console.WriteLine(query);
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
 
                 cmd.Parameters.AddWithValue("@Name", txtname.Text);
                 cmd.Parameters.AddWithValue("@Gender", radioButton1.Checked ? "Male" : "Female");
@@ -291,7 +282,7 @@ namespace employeesManagement
 
                 string query = "DELETE FROM tbl_employees WHERE ID=@ID";
 
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
                 cmd.Parameters.AddWithValue("@ID", dataGridView1.SelectedCells[0].Value.ToString());
 
                 cmd.ExecuteNonQuery();
@@ -360,9 +351,9 @@ namespace employeesManagement
             try
             {
                 string query = "SELECT DepName FROM tbl_departments";
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
 
-                using (OleDbDataReader reader = cmd.ExecuteReader())
+                using (SQLiteDataReader reader = cmd.ExecuteReader())
                 {
                     DataTable departmentsTable = new DataTable();
                     departmentsTable.Load(reader);

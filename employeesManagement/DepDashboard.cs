@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SQLite;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace employeesManagement
 {
@@ -20,11 +14,10 @@ namespace employeesManagement
             InitializeComponent();
         }
 
-        OleDbConnection con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
-        //OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=db_users.accdb");
+        SQLiteConnection con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
 
-        OleDbCommand cmd = new OleDbCommand();
-        OleDbDataAdapter da = new OleDbDataAdapter();
+        SQLiteCommand cmd = new SQLiteCommand();
+        SQLiteDataAdapter da = new SQLiteDataAdapter();
         DataTable dt = new DataTable();
 
         private void HandleError(Exception ex, string message)
@@ -72,9 +65,9 @@ namespace employeesManagement
         {
             try
             {
-                con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
+                con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
                 dt = new DataTable();
-                da = new OleDbDataAdapter("SELECT *FROM tbl_departments", con);
+                da = new SQLiteDataAdapter("SELECT *FROM tbl_departments", con);
 
                 con.Open();
 
@@ -130,7 +123,7 @@ namespace employeesManagement
 
                 string query = "INSERT INTO tbl_departments (DepName, Description, Location) " +
                                "VALUES (@Name, @description, @location)";
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
                 // Add parameters...
                 cmd.Parameters.AddWithValue("@Name", txtname.Text);
                 cmd.Parameters.AddWithValue("@description", txtdes.Text);
@@ -172,7 +165,7 @@ namespace employeesManagement
                     "WHERE ID=@ID";
 
                 Console.WriteLine(query);
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
 
                 cmd.Parameters.AddWithValue("@Name", txtname.Text);
                 cmd.Parameters.AddWithValue("@description", txtdes.Text);
@@ -204,7 +197,7 @@ namespace employeesManagement
                 string query = "DELETE FROM tbl_departments WHERE ID=@ID";
 
 
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
                 cmd.Parameters.AddWithValue("@ID", dataGridView1.SelectedCells[0].Value.ToString());
 
                 cmd.ExecuteNonQuery();
@@ -226,9 +219,9 @@ namespace employeesManagement
         {
             try
             {
-                con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
+                con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
                 dt = new DataTable();
-                da = new OleDbDataAdapter("SELECT DepName, COUNT(*) AS empAmount FROM tbl_employees GROUP BY DepName", con);
+                da = new SQLiteDataAdapter("SELECT DepName, COUNT(*) AS empAmount FROM tbl_employees GROUP BY DepName", con);
 
                 con.Open();
 

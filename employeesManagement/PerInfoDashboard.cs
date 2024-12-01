@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace employeesManagement
 {
@@ -20,11 +14,10 @@ namespace employeesManagement
             InitializeComponent();
         }
 
-        OleDbConnection con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
-        //OleDbConnection con = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=db_users.accdb");
+        SQLiteConnection con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
 
-        OleDbCommand cmd = new OleDbCommand();
-        OleDbDataAdapter da = new OleDbDataAdapter();
+        SQLiteCommand cmd = new SQLiteCommand();
+        SQLiteDataAdapter da = new SQLiteDataAdapter();
         DataTable dt = new DataTable();
 
         private byte[] pictureData;
@@ -83,9 +76,9 @@ namespace employeesManagement
         {
             try
             {
-                con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=db_users.mdb");
+                con = new SQLiteConnection("Data Source=db_users.db;Version=3;");
                 dt = new DataTable();
-                da = new OleDbDataAdapter("SELECT *FROM tbl_personalInfo", con);
+                da = new SQLiteDataAdapter("SELECT *FROM tbl_personalInfo", con);
 
                 con.Open();
                 da.Fill(dt);
@@ -130,7 +123,7 @@ namespace employeesManagement
                      (pictureData != null ? ", Picture=@Picture" : "") +
                      " WHERE ID=@ID";
 
-                cmd = new OleDbCommand(updatequery, con);
+                cmd = new SQLiteCommand(updatequery, con);
 
                 cmd.Parameters.AddWithValue("@Mall", txtmall.Text);
                 cmd.Parameters.AddWithValue("@Telephone", txttelephone.Text);
@@ -244,7 +237,7 @@ namespace employeesManagement
 
                 string query = "DELETE FROM tbl_personalInfo WHERE ID=@ID";
 
-                cmd = new OleDbCommand(query, con);
+                cmd = new SQLiteCommand(query, con);
                 cmd.Parameters.AddWithValue("@ID", dataGridView1.SelectedCells[0].Value.ToString());
 
                 cmd.ExecuteNonQuery();
